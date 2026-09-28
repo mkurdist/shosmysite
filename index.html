@@ -1,0 +1,80 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>کفش‌سرا | خرید آنلاین کفش مردانه، زنانه و بچگانه</title>
+<meta name="description" content="خرید آنلاین کفش چرم، اسپورت و کتونی برای آقایان، بانوان و کودکان">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14181f;--mut:#667085;--bg:#fff;--sf:#f1f3f5;--ac:#2b4eff;--ln:#e3e6ea}
+@media(prefers-color-scheme:dark){:root{--ink:#f2f4f7;--mut:#98a2b3;--bg:#0f1319;--sf:#1a2029;--ln:#2a323d}}
+*{box-sizing:border-box;margin:0}body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem}
+.logo{font-weight:900;font-size:1.4rem}.logo b{color:var(--ac)}
+.cartbtn{background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:.4rem 1rem}
+.hero{padding:3rem 1rem 1.5rem;max-width:1100px;margin:auto}
+.hero h1{font-size:clamp(2rem,7vw,4rem);font-weight:900;line-height:1.15;max-width:14ch}
+.hero p{color:var(--mut);margin-top:.8rem;max-width:44ch}
+.bar{max-width:1100px;margin:1rem auto;padding:0 1rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.chip{border:1px solid var(--ln);background:var(--bg);border-radius:99px;padding:.3rem 1rem}
+.chip[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:#fff}
+.sep{width:1px;background:var(--ln);margin:0 .3rem}
+main{max-width:1100px;margin:auto;padding:0 1rem 4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem}
+.card{background:var(--sf);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pic{aspect-ratio:1;display:grid;place-items:center}.pic img{width:100%;height:100%;object-fit:cover}
+.info{padding:.8rem}.info small{color:var(--mut)}.price{font-weight:700;margin:.2rem 0}
+.row{display:flex;gap:.4rem;margin-top:.4rem}
+select,input,textarea{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:.5rem}
+.add{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:.5rem 1rem;white-space:nowrap}
+aside{position:fixed;inset:0 auto 0 0;width:min(420px,100%);background:var(--bg);border-inline-end:1px solid var(--ln);transform:translateX(-100%);transition:transform .25s;z-index:9;display:flex;flex-direction:column;padding:1rem}
+aside.open{transform:none}aside h2{margin-bottom:.5rem}
+#lines{flex:1;overflow:auto}.ln{display:flex;justify-content:space-between;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--ln);align-items:center}
+.ln button{border:1px solid var(--ln);background:var(--sf);border-radius:6px;width:28px}
+form{display:grid;gap:.4rem;margin-top:.6rem}.pay{background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:.7rem;font-weight:700}
+#msg{position:fixed;bottom:1rem;inset-inline:1rem;margin:auto;max-width:420px;background:var(--ink);color:var(--bg);padding:.8rem 1rem;border-radius:10px;display:none;z-index:20}
+@media(prefers-reduced-motion:reduce){aside{transition:none}}
+.pic{position:relative}.bd{position:absolute;top:8px;inset-inline-start:8px;background:var(--bg);border-radius:99px;padding:0 .7rem;font-size:.8rem}
+</style></head><body>
+<header><div class="logo">کفش<b>سرا</b></div><button class="cartbtn" id="cb">سبد خرید (<span id="cn">0</span>)</button></header>
+<section class="hero"><h1>کفشی که با قدم‌هات جور باشه</h1><p>چرم، اسپورت و کتونی برای آقایان، بانوان و کودکان. ارسال به سراسر کشور.</p></section>
+<div class="bar" id="fg" role="group" aria-label="دسته‌بندی"></div>
+<div class="bar" id="ft" role="group" aria-label="نوع"></div>
+<main id="grid" aria-live="polite"></main>
+<aside id="cart" aria-label="سبد خرید"><h2>سبد خرید</h2><div id="lines"></div><b id="total"></b>
+<form id="f"><input name="name" placeholder="نام و نام خانوادگی" required autocomplete="name">
+<input name="phone" placeholder="موبایل (09123456789)" required pattern="09\d{9}" inputmode="numeric" autocomplete="tel">
+<textarea name="address" placeholder="آدرس کامل" required rows="2" autocomplete="street-address"></textarea>
+<button class="pay" id="pb">پرداخت آنلاین</button></form>
+<button class="chip" id="cc" style="margin-top:.5rem">بستن</button></aside>
+<div id="msg" role="status"></div>
+<script>
+const $=id=>document.getElementById(id),fa=n=>(+n).toLocaleString('fa-IR'),G=['همه','مردانه','زنانه','بچگانه'];
+let P=[],g='همه',t='همه',C=JSON.parse(localStorage.cart||'[]');
+const save=()=>{localStorage.cart=JSON.stringify(C);render()};
+function toast(m){const e=$('msg');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',5000)}
+function chips(el,list,cur,set){el.innerHTML='';list.forEach(v=>{const b=document.createElement('button');b.className='chip';b.textContent=v;b.setAttribute('aria-pressed',v===cur);b.onclick=()=>{set(v);render()};el.append(b)})}
+const SH={
+'چرم':'<path d="M10 62C10 50 18 46 30 44L52 40C60 30 72 28 84 34C96 40 108 48 110 62Z" fill="%c"/><path d="M40 46l8 6M50 42l8 6M60 38l8 6" stroke="#fff8" stroke-width="2"/><rect x="6" y="62" width="104" height="10" rx="3" fill="#222"/><rect x="8" y="72" width="22" height="6" rx="2" fill="#222"/>',
+'اسپورت':'<path d="M8 60C8 40 16 30 28 24L42 22C50 34 62 38 74 38C92 40 110 46 114 60Z" fill="%c"/><path d="M38 52Q70 40 104 54" stroke="#fff" stroke-width="4" fill="none"/><path d="M6 60h110q4 0 4 5v6q0 4-4 4H10q-4 0-4-4z" fill="#f4f4f4" stroke="#0003"/><path d="M14 68h96" stroke="#0003"/>',
+'کتونی':'<path d="M10 62C10 44 18 36 30 34L50 36C62 44 76 46 86 48L86 62Z" fill="%c"/><path d="M84 62C84 48 98 44 112 54L112 62Z" fill="#fff" stroke="#0003"/><path d="M34 40l10 4M40 36l10 4M46 34l8 4" stroke="#fff" stroke-width="2"/><rect x="6" y="62" width="108" height="10" rx="4" fill="#fff" stroke="#0003"/><path d="M6 66h108" stroke="#c33" stroke-width="2"/>'};
+const shoe=(t,c)=>`<svg viewBox="0 0 120 84" width="72%" role="img" aria-label="${t}">${(SH[t]||SH['کتونی']).replaceAll('%c',c)}</svg>`;
+function render(){
+  const T=['همه',...new Set(P.map(p=>p.type))];
+  chips($('fg'),G,g,v=>g=v);chips($('ft'),T,t,v=>t=v);
+  const L=P.filter(p=>(g==='همه'||p.gender===g)&&(t==='همه'||p.type===t));
+  $('grid').innerHTML=L.length?L.map(p=>`<article class="card"><div class="pic" style="background:${p.color}22"><span class="bd">${p.gender}</span>${p.img?`<img loading="lazy" decoding="async" width="300" height="300" src="${p.img}" alt="${p.name}">`:shoe(p.type,p.color)}</div><div class="info"><small>${p.gender} · ${p.type}</small><h3>${p.name}</h3><div class="price">${fa(p.price)} تومان</div><div class="row"><select id="s${p.id}" aria-label="سایز">${p.sizes.map(s=>`<option>${s}</option>`).join('')}</select><button class="add" data-id="${p.id}">افزودن</button></div></div></article>`).join(''):'<p>محصولی یافت نشد. فیلتر را تغییر دهید.</p>';
+  $('cn').textContent=fa(C.reduce((a,i)=>a+i.qty,0));
+  let sum=0;$('lines').innerHTML=C.length?C.map((i,k)=>{const p=P.find(x=>x.id===i.id);if(!p)return'';sum+=p.price*i.qty;return`<div class="ln"><span>${p.name}<br><small>سایز ${i.size} · ${fa(p.price*i.qty)}</small></span><span><button data-k="${k}" data-d="1" aria-label="افزودن">+</button> ${fa(i.qty)} <button data-k="${k}" data-d="-1" aria-label="کاهش">−</button></span></div>`}).join(''):'<p>سبد خرید خالی است. از فروشگاه کفش انتخاب کنید.</p>';
+  $('total').textContent='مجموع: '+fa(sum)+' تومان';$('f').style.display=C.length?'grid':'none';
+}
+$('grid').onclick=e=>{const id=e.target.dataset.id;if(!id)return;const size=$('s'+id).value,x=C.find(i=>i.id===id&&i.size===size);x?x.qty++:C.push({id,size,qty:1});save();$('cart').classList.add('open')};
+$('lines').onclick=e=>{const k=e.target.dataset.k;if(k==null)return;C[k].qty+=+e.target.dataset.d;if(C[k].qty<1)C.splice(k,1);save()};
+$('cb').onclick=()=>$('cart').classList.add('open');$('cc').onclick=()=>$('cart').classList.remove('open');
+$('f').onsubmit=async e=>{e.preventDefault();$('pb').disabled=true;
+  try{const r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:C,...Object.fromEntries(new FormData(e.target))})}),d=await r.json();
+  if(d.url)location.href=d.url;else toast(d.error||'خطا')}catch{toast('اتصال برقرار نشد. دوباره تلاش کنید.')}$('pb').disabled=false};
+const q=new URLSearchParams(location.search).get('paid');
+if(q){const ok=q==='ok'||q==='demo';if(ok){C=[];save()}toast(ok?'پرداخت موفق بود. شماره سفارش: '+new URLSearchParams(location.search).get('order'):'پرداخت ناموفق بود. سبد شما حفظ شد.');history.replaceState(0,'','/')}
+fetch('/api/products').then(r=>r.json()).then(d=>{P=d;render()}).catch(()=>toast('بارگذاری محصولات ناموفق بود'));render();
+</script></body></html>

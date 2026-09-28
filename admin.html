@@ -1,0 +1,102 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>پنل مدیریت</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14181f;--mut:#667085;--bg:#fff;--sf:#f1f3f5;--ac:#2b4eff;--ln:#e3e6ea;--rd:#d92d20}
+@media(prefers-color-scheme:dark){:root{--ink:#f2f4f7;--mut:#98a2b3;--bg:#0f1319;--sf:#1a2029;--ln:#2a323d}}
+*{box-sizing:border-box;margin:0}body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+input,select{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:.45rem}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:.45rem 1rem}.ghost{background:var(--sf);color:var(--ink);border:1px solid var(--ln)}.del{background:none;border:0;color:var(--rd)}
+header{display:flex;justify-content:space-between;align-items:center;padding:.6rem 1rem;border-bottom:1px solid var(--ln);position:sticky;top:0;background:var(--bg);z-index:3}
+nav{display:flex;gap:.4rem}nav button[aria-selected=true]{background:var(--ac);color:#fff;border-color:var(--ac)}
+.wrap{max-width:1100px;margin:auto;padding:1rem}
+#login{max-width:340px;margin:20vh auto;padding:1rem;display:grid;gap:.6rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-bottom:1rem}
+.stat{background:var(--sf);border-radius:12px;padding:.8rem}.stat b{display:block;font-size:1.4rem}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:640px}th,td{text-align:right;padding:.5rem;border-bottom:1px solid var(--ln);vertical-align:top}th{color:var(--mut);font-weight:400}
+.pf{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;background:var(--sf);padding:.8rem;border-radius:12px;margin-bottom:1rem;align-items:end}
+label{font-size:.85rem;color:var(--mut)}.dot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;border:1px solid var(--ln)}
+#msg{position:fixed;bottom:1rem;inset-inline:1rem;margin:auto;max-width:400px;background:var(--ink);color:var(--bg);padding:.7rem 1rem;border-radius:10px;display:none}
+[hidden]{display:none!important}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem}.mi{background:var(--sf);border-radius:10px;overflow:hidden;font-size:.8rem}.mi img{width:100%;aspect-ratio:1;object-fit:cover;display:block;cursor:pointer}.mi div{display:flex;justify-content:space-between;padding:.25rem .4rem}
+.dz{display:block;border:2px dashed var(--ln);border-radius:12px;padding:1.2rem;text-align:center;margin-bottom:1rem;cursor:pointer;color:var(--ink)}.dz.on{border-color:var(--ac)}
+dialog{border:1px solid var(--ln);border-radius:12px;background:var(--bg);color:var(--ink);width:min(720px,94vw);padding:1rem;max-height:90vh;overflow:auto}dialog::backdrop{background:#0008}
+</style></head><body>
+<form id="login"><h1>ورود مدیر</h1><input id="pw" type="password" placeholder="رمز عبور" autocomplete="current-password" required><button class="btn">ورود</button></form>
+<div id="app" hidden>
+<header><nav role="tablist"><button class="btn ghost" role="tab" data-t="o" aria-selected="true">سفارش‌ها</button><button class="btn ghost" role="tab" data-t="p" aria-selected="false">محصولات</button><button class="btn ghost" role="tab" data-t="m" aria-selected="false">رسانه</button></nav><span><a href="/">مشاهده سایت</a> <button class="btn ghost" id="out">خروج</button></span></header>
+<div class="wrap">
+<section id="so"><div class="stats" id="stats"></div><div class="row" style="margin-bottom:.6rem;max-width:220px"><select id="fs" aria-label="فیلتر وضعیت"></select></div><div class="tw"><table><thead><tr><th>#</th><th>مشتری</th><th>اقلام</th><th>مبلغ</th><th>تاریخ</th><th>وضعیت</th></tr></thead><tbody id="ob"></tbody></table></div></section>
+<section id="sp" hidden><form class="pf" id="pf"><input type="hidden" name="id">
+<div><label>نام</label><input name="name" required></div><div><label>قیمت (تومان)</label><input name="price" type="number" min="0" required></div>
+<div><label>دسته</label><select name="gender"><option>مردانه</option><option>زنانه</option><option>بچگانه</option></select></div>
+<div><label>نوع (چرم، اسپورت، کتونی…)</label><input name="type" required></div>
+<div><label>سایزها (با ویرگول)</label><input name="sizes" placeholder="40,41,42" required></div>
+<div><label>رنگ</label><input name="color" type="color" value="#2b4eff"></div>
+<div><label>عکس محصول</label><div style="display:flex;gap:.4rem;align-items:center"><img id="pv" alt="" width="40" height="40" hidden style="object-fit:cover;border-radius:6px"><input name="img" type="url" dir="ltr" placeholder="لینک عکس"><button type="button" class="btn ghost" id="pick">رسانه</button></div></div>
+<div style="display:flex;gap:.4rem"><button class="btn">ذخیره</button><button type="button" class="btn ghost" id="rs">جدید</button></div></form>
+<button class="btn ghost" id="seed" style="margin-bottom:.6rem">انتقال محصولات نمونه به Supabase</button>
+<div class="tw"><table><thead><tr><th>نام</th><th>دسته</th><th>نوع</th><th>قیمت</th><th>سایزها</th><th></th></tr></thead><tbody id="pb"></tbody></table></div></section>
+<section id="sm" hidden><label class="dz" id="dz"><input type="file" id="fi" accept="image/*" multiple hidden>عکس‌ها را اینجا رها کنید یا برای انتخاب کلیک کنید<br><small>قبل از آپلود به‌صورت خودکار فشرده و بهینه می‌شوند</small></label><div class="mg" id="mg"></div></section>
+</div></div><div id="msg" role="status"></div>
+<dialog id="pk"><div style="display:flex;justify-content:space-between;margin-bottom:.6rem"><b>انتخاب از رسانه</b><button class="btn ghost" type="button" id="pkc">بستن</button></div><label class="dz"><input type="file" id="fi2" accept="image/*" multiple hidden>آپلود عکس جدید</label><div class="mg" id="pkg"></div></dialog>
+<script>
+const $=id=>document.getElementById(id),fa=n=>(+n).toLocaleString('fa-IR');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LB={pending:'در انتظار پرداخت',paid:'پرداخت‌شده',shipped:'ارسال‌شده',delivered:'تحویل‌شده',canceled:'لغو‌شده',failed:'ناموفق'};
+let T=sessionStorage.tk||'',O=[],P=[];
+function toast(m){const e=$('msg');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',3500)}
+async function api(p,m='GET',b){
+  const r=await fetch('/api/admin'+p,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+T},body:b?JSON.stringify(b):undefined});
+  if(r.status===401&&p!=='/login'){logout();throw 0}
+  const d=await r.json();if(!r.ok){toast(d.error||'خطا');throw 0}return d;
+}
+function logout(){sessionStorage.removeItem('tk');T='';$('app').hidden=true;$('login').hidden=false}
+async function start(){$('login').hidden=true;$('app').hidden=false;await Promise.all([loadO(),loadP()])}
+$('login').onsubmit=async e=>{e.preventDefault();
+  const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('pw').value})}),d=await r.json();
+  if(!r.ok)return toast(d.error||'خطا');T=d.token;sessionStorage.tk=T;$('pw').value='';start()};
+$('out').onclick=logout;
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));$('so').hidden=b.dataset.t!=='o';$('sp').hidden=b.dataset.t!=='p';$('sm').hidden=b.dataset.t!=='m';if(b.dataset.t==='m')loadM()});
+$('fs').innerHTML='<option value="">همه وضعیت‌ها</option>'+Object.entries(LB).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('fs').onchange=drawO;
+async function loadO(){O=await api('/orders');drawO()}
+function drawO(){
+  const paid=O.filter(o=>['paid','shipped','delivered'].includes(o.status)),f=$('fs').value;
+  $('stats').innerHTML=[['کل سفارش‌ها',fa(O.length)],['نیاز به ارسال',fa(O.filter(o=>o.status==='paid').length)],['درآمد (تومان)',fa(paid.reduce((a,o)=>a+o.total,0))],['در انتظار پرداخت',fa(O.filter(o=>o.status==='pending').length)]].map(([a,b])=>`<div class="stat">${a}<b>${b}</b></div>`).join('');
+  $('ob').innerHTML=O.filter(o=>!f||o.status===f).map(o=>`<tr><td>${esc(o.id)}</td><td>${esc(o.name)}<br><small dir="ltr">${esc(o.phone)}</small><br><small>${esc(o.address)}</small></td><td>${(o.items||[]).map(i=>`${esc(i.name)} (سایز ${esc(i.size)}) ×${fa(i.qty)}`).join('<br>')}</td><td>${fa(o.total)}</td><td><small>${o.created_at?new Date(o.created_at).toLocaleString('fa-IR'):''}</small></td><td><select data-id="${esc(o.id)}" aria-label="وضعیت سفارش">${Object.entries(LB).map(([k,v])=>`<option value="${k}"${k===o.status?' selected':''}>${v}</option>`).join('')}</select>${o.ref_id?`<br><small>پیگیری: ${esc(o.ref_id)}</small>`:''}</td></tr>`).join('')||'<tr><td colspan="6">سفارشی وجود ندارد.</td></tr>';
+}
+$('ob').onchange=async e=>{const id=e.target.dataset.id;if(!id)return;await api('/orders/'+id,'PATCH',{status:e.target.value});toast('وضعیت ذخیره شد');loadO()};
+async function loadP(){P=await api('/products');$('pb').innerHTML=P.map(p=>`<tr><td>${p.img?`<img src="${esc(p.img)}" alt="" width="28" height="28" style="object-fit:cover;border-radius:5px;vertical-align:middle">`:`<span class="dot" style="background:${esc(p.color)}"></span>`} ${esc(p.name)}</td><td>${esc(p.gender)}</td><td>${esc(p.type)}</td><td>${fa(p.price)}</td><td>${esc((p.sizes||[]).join('، '))}</td><td><button class="btn ghost" data-e="${esc(p.id)}">ویرایش</button> <button class="del" data-d="${esc(p.id)}">حذف</button></td></tr>`).join('')||'<tr><td colspan="6">محصولی نیست.</td></tr>'}
+$('pb').onclick=async e=>{const {e:ed,d}=e.target.dataset;
+  if(ed){const p=P.find(x=>x.id===ed),f=$('pf');for(const k of['id','name','price','gender','type','color','img'])f[k].value=p[k]||'';f.sizes.value=(p.sizes||[]).join(',');setPv();f.scrollIntoView({behavior:'smooth'})}
+  if(d&&confirm('این محصول حذف شود؟')){await api('/products/'+encodeURIComponent(d),'DELETE');toast('حذف شد');loadP()}};
+$('pf').onsubmit=async e=>{e.preventDefault();await api('/products','POST',Object.fromEntries(new FormData(e.target)));toast('ذخیره شد');e.target.reset();e.target.id.value='';setPv();loadP()};
+$('rs').onclick=()=>{$('pf').reset();$('pf').id.value='';setPv()};
+$('seed').onclick=async()=>{await api('/seed','POST');toast('انتقال انجام شد');loadP()};
+let M=[];
+const setPv=()=>{const v=$('pf').img.value,i=$('pv');i.hidden=!v;if(v)i.src=v};$('pf').img.oninput=setPv;
+const mh=(tools)=>M.map(m=>`<div class="mi"><img loading="lazy" src="${esc(m.url)}" alt="" data-u="${esc(m.url)}">${tools?`<div><button class="del" data-x="${esc(m.name)}">حذف</button><button class="del" style="color:var(--ac)" data-u="${esc(m.url)}">کپی لینک</button></div>`:''}</div>`).join('')||'<p>هنوز عکسی آپلود نشده است.</p>';
+async function loadM(){M=await api('/media');$('mg').innerHTML=mh(1);$('pkg').innerHTML=mh(0)}
+async function shrink(f){
+  if(f.type==='image/gif')return f;
+  const b=await createImageBitmap(f),k=Math.min(1,1200/Math.max(b.width,b.height)),c=document.createElement('canvas');
+  c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext('2d').drawImage(b,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(x=>r(x||f),'image/webp',.82));
+}
+async function up(files){
+  for(const f of files){if(!f.type.startsWith('image/'))continue;
+    try{const blob=await shrink(f),r=await fetch('/api/admin/media',{method:'POST',headers:{'Content-Type':blob.type,Authorization:'Bearer '+T},body:blob});
+    if(!r.ok)toast((await r.json()).error||'خطا در آپلود')}catch{toast('این فایل قابل پردازش نیست')}}
+  await loadM();toast('آپلود انجام شد');
+}
+$('fi').onchange=$('fi2').onchange=e=>{up(e.target.files);e.target.value=''};
+const dz=$('dz');dz.ondragover=e=>{e.preventDefault();dz.classList.add('on')};dz.ondragleave=()=>dz.classList.remove('on');dz.ondrop=e=>{e.preventDefault();dz.classList.remove('on');up(e.dataTransfer.files)};
+$('mg').onclick=async e=>{const {x,u}=e.target.dataset;
+  if(x&&confirm('این عکس حذف شود؟')){await api('/media/'+encodeURIComponent(x),'DELETE');loadM()}
+  else if(u){try{await navigator.clipboard.writeText(new URL(u,location.origin).href);toast('لینک کپی شد')}catch{toast(u)}}};
+$('pick').onclick=async()=>{await loadM();$('pk').showModal()};$('pkc').onclick=()=>$('pk').close();
+$('pkg').onclick=e=>{const u=e.target.dataset.u;if(u){$('pf').img.value=u;setPv();$('pk').close()}};
+if(T)start().catch(()=>{});
+</script></body></html>
